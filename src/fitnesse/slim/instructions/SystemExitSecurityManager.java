@@ -265,7 +265,6 @@ public class SystemExitSecurityManager extends SecurityManager {
   }
 
   public void checkSystemClipboardAccess() {
-
     if (delegate != null) {
       delegate.checkPermission(SecurityConstants.ALL_PERMISSION);
     }
