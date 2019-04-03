@@ -1,5 +1,7 @@
 package fitnesse.slim.instructions;
 
+import sun.security.util.SecurityConstants;
+
 import java.security.Permission;
 
 public class SystemExitSecurityManager extends SecurityManager {
@@ -200,35 +202,10 @@ public class SystemExitSecurityManager extends SecurityManager {
   }
 
   @Override
-  public boolean checkTopLevelWindow(Object window) {
-    if (delegate != null) {
-      return delegate.checkTopLevelWindow(window);
-    } else {
-      return false;
-    }
-  }
-
-  @Override
   public void checkPrintJobAccess() {
 
     if (delegate != null) {
       delegate.checkPrintJobAccess();
-    }
-  }
-
-  @Override
-  public void checkSystemClipboardAccess() {
-
-    if (delegate != null) {
-      delegate.checkSystemClipboardAccess();
-    }
-  }
-
-  @Override
-  public void checkAwtEventQueueAccess() {
-
-    if (delegate != null) {
-      delegate.checkAwtEventQueueAccess();
     }
   }
 
@@ -256,14 +233,6 @@ public class SystemExitSecurityManager extends SecurityManager {
   }
 
   @Override
-  public void checkMemberAccess(Class<?> clazz, int which) {
-
-    if (delegate != null) {
-      delegate.checkMemberAccess(clazz, which);
-    }
-  }
-
-  @Override
   public void checkSecurityAccess(String target) {
 
     if (delegate != null) {
@@ -281,4 +250,36 @@ public class SystemExitSecurityManager extends SecurityManager {
 
   }
 
+  // Deprecated methods removed in Java 11
+
+  public boolean checkTopLevelWindow(Object window) {
+    if (delegate != null) {
+      try {
+        delegate.checkPermission(SecurityConstants.ALL_PERMISSION);
+        return true;
+      } catch (SecurityException se) {
+        // just return false
+      }
+    }
+    return false;
+  }
+
+  public void checkSystemClipboardAccess() {
+
+    if (delegate != null) {
+      delegate.checkPermission(SecurityConstants.ALL_PERMISSION);
+    }
+  }
+
+  public void checkAwtEventQueueAccess() {
+    if (delegate != null) {
+      delegate.checkPermission(SecurityConstants.ALL_PERMISSION);
+    }
+  }
+
+  public void checkMemberAccess(Class<?> clazz, int which) {
+    if (delegate != null) {
+      delegate.checkPermission(SecurityConstants.ALL_PERMISSION);
+    }
+  }
 }
